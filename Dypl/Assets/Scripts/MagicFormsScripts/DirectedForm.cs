@@ -37,6 +37,13 @@ public class DirectedForm : MonoBehaviour
         GameObject type = Instantiate(this.magicType, gameObject.transform);
     }
 
+    public void setStats(GameObject magicType, GameObject parent)
+    {
+        this.magicType = magicType;
+        this.parent = parent;
+        GameObject type = Instantiate(this.magicType, gameObject.transform);
+    }
+
     private void Update()
     {
         transform.Translate(0, 0, speed * Time.deltaTime);
@@ -49,7 +56,7 @@ public class DirectedForm : MonoBehaviour
 
         if (transform.GetChild(0).Find("Light")) // not sure if it works
         {
-            transform.GetChild(0).Find("Light").GetComponent<Light>().range -= 0.003f;
+            transform.GetChild(0).Find("Light").GetComponent<Light>().range -= speedOfDisappearing;
         }
 
         if (size <= 0.2) Destroy(gameObject);
@@ -60,16 +67,26 @@ public class DirectedForm : MonoBehaviour
         //Debug.Log("name: " + other.name);
         if (other.gameObject.layer == 6)
         {
-            if(other.transform.parent.GetComponent<SimpleEnemy>())
+            if (other.transform.parent.GetComponent<SimpleEnemy>())
+            {
                 other.transform.parent.GetComponent<SimpleEnemy>().GetDamage(power);
+                Destroy(gameObject);
+            }
             if (other.transform.parent.GetComponent<JumperEnemy>())
-                other.transform.parent.GetComponent<JumperEnemy>().GetDamage(power);
-
-            if (other.GetComponent<SimpleEnemy>()) 
+            {
+                other.transform.parent.GetComponent<SimpleEnemy>().GetDamage(power);
+                Destroy(gameObject);
+            }
+            if (other.GetComponent<SimpleEnemy>())
+            {
                 other.GetComponent<SimpleEnemy>().GetDamage(power);
+                Destroy(gameObject);
+            }
             if (other.GetComponent<JumperEnemy>())
-                other.GetComponent<JumperEnemy>().GetDamage(power);
-
+            {
+                other.GetComponent<SimpleEnemy>().GetDamage(power);
+                Destroy(gameObject);
+            }
         }
     }
 }

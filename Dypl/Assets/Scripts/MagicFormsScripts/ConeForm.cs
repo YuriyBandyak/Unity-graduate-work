@@ -17,19 +17,16 @@ public class ConeForm : MonoBehaviour
         power = MagicBalance.Cone.power;
         this.spell = spell;
         this.magicType = magicType;
-        gameObject.transform.rotation = playerTransform.rotation;
+        //gameObject.transform.Rotate(new Vector3(0, playerTransform.rotation.y, 0));
         this.magicType = Instantiate(magicType, gameObject.transform);
 
         distance = MagicBalance.Cone.distance;
-        if (GetComponentInChildren<MeshCollider>())
-        {
-            GetComponentInChildren<MeshCollider>().transform.localScale = new Vector3(distance, distance, distance);
-        }
+
         Transform[] transforms;
         transforms = GetComponentsInChildren<Transform>();
-        foreach(Transform i in transforms)
+        foreach (Transform i in transforms)
         {
-            i.localScale = new Vector3(distance, distance, distance);
+            i.localScale = i.localScale * distance;
         }
     }
 
@@ -37,7 +34,7 @@ public class ConeForm : MonoBehaviour
     {
         if (GetComponentInChildren<ParticleSystem>().particleCount == 0)
         {
-            Object.Destroy(gameObject,5);
+            Object.Destroy(gameObject,1);
         }
     }
 

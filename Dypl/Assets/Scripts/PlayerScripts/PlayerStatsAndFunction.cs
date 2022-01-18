@@ -30,6 +30,8 @@ public class PlayerStatsAndFunction : MonoBehaviour
 
     private List<GameObject> listOfActivableObjects;
 
+    private bool castingRay = false;
+
     //References
     public GameObject spellCreationWindows = null;
     public GameObject playerStatsWindow = null;
@@ -40,10 +42,14 @@ public class PlayerStatsAndFunction : MonoBehaviour
 
     private GameObject spellCreationPanel = null;
 
+    private Animator myAnimator;
+
+    public GameObject player;
     private void Start()
     {
         spellCreationPanel = spellCreationWindows.transform.GetChild(0).gameObject;
         //AddEffect(BuffsDebuffs.buffsDebuffs.fired, 5);
+        myAnimator = transform.Find("Ch36_nonPBR").GetComponent<Animator>();
     }
 
     private void FixedUpdate() // default its 50/sec
@@ -56,11 +62,13 @@ public class PlayerStatsAndFunction : MonoBehaviour
         {
             currentHP += (healthRegenPerSec / 50);
         }
+
     }
+
     public void Update()
     {
         // showing pointer only during fight time
-        if (state == PlayerStates.inFight) GetComponent<MouseController>().ShowPointer(); 
+            if (state == PlayerStates.inFight) GetComponent<MouseController>().ShowPointer(); 
 
         // checking if mouse is above menus
         SetCurrentPointerStateOnUI();
@@ -131,6 +139,8 @@ public class PlayerStatsAndFunction : MonoBehaviour
         currentHP -= dmg;
     }
 
+
+
     private void QuickSlotsKeys()
     {
         bool isAlphaPressed = false;
@@ -176,7 +186,7 @@ public class PlayerStatsAndFunction : MonoBehaviour
         }
     }
 
-    private void Cast()
+    public void Cast()
     {
         if (choosedSpellNumber != -1 
             && GetComponent<Spells>().spellslist[choosedSpellNumber] != null 
@@ -201,20 +211,30 @@ public class PlayerStatsAndFunction : MonoBehaviour
             if (GetComponent<Spells>().spellslist[choosedSpellNumber].currentForm == Spells.MagicForms.Wall && Input.GetMouseButtonUp(0) && wallSpellObject.GetComponent<WallForm>().preparingModeState==0)
             {
                 GetComponent<PlayerMovement>().isPlayerCastSpell = true;
-                transform.Find("Hand").GetChild(0).GetComponent<Animator>().SetBool("Casting", true);
+                myAnimator.SetBool("castSpell", true);
+                wallSpellObject.GetComponent<WallForm>().SetSupportiveObjectInvisible();
                 //GetComponent<MouseController>().lookAt();
             }
             else if(GetComponent<Spells>().spellslist[choosedSpellNumber].currentForm == Spells.MagicForms.Ray && Input.GetMouseButtonDown(0))
             {
+                Debug.Log("Its 1");
                 RayCast();
                 GetComponent<MouseController>().lookAt();
+
+                myAnimator.SetBool("castSpell", true);
+
+                castingRay = true;
             }
-            else if(GetComponent<Spells>().spellslist[choosedSpellNumber].currentForm == Spells.MagicForms.Ray && Input.GetMouseButtonUp(0) && transform.Find("Hand").GetChild(0).GetComponent<Animator>().speed == 0)
+            else if(GetComponent<Spells>().spellslist[choosedSpellNumber].currentForm == Spells.MagicForms.Ray && Input.GetMouseButtonUp(0) && castingRay == true)
             {
-                transform.Find("Hand").GetChild(0).GetComponent<Animator>().speed = 1;
-                transform.Find("Hand").GetChild(0).GetComponent<Animator>().SetBool("Casting", false);
                 GetComponent<PlayerMovement>().isPlayerCastSpell = false;
-                raySpellObject.GetComponent<RayForm>().Stop();
+                if (raySpellObject != null)
+                {
+                    raySpellObject.GetComponent<RayForm>().Stop();
+                }
+                
+                myAnimator.SetBool("castSpell", false);
+                castingRay = false;
             }
 
             if (GetComponent<Spells>().spellslist[choosedSpellNumber].currentForm == Spells.MagicForms.Ray && Input.GetMouseButton(0))
@@ -226,16 +246,15 @@ public class PlayerStatsAndFunction : MonoBehaviour
 
     private void QuickCast()
     {
-        if(transform.Find("Hand").GetChild(0))// staff instantiated here
+        if(state == PlayerStates.inFight)
         {
             castType = CastType.quick;
-
             GetComponent<PlayerMovement>().isPlayerCastSpell = true;
-            transform.Find("Hand").GetChild(0).GetComponent<Animator>().SetBool("Casting", true);
+            myAnimator.SetBool("castSpell", true);
             GetComponent<MouseController>().lookAt();
         }
-        
     }
+
 
     private void WallCast()
     {
@@ -248,37 +267,40 @@ public class PlayerStatsAndFunction : MonoBehaviour
         castType = CastType.ray;
 
         GetComponent<PlayerMovement>().isPlayerCastSpell = true;
-        transform.Find("Hand").GetChild(0).GetComponent<Animator>().SetBool("Casting", true);
+        //hand.transform.GetChild(0).GetComponent<Animator>().SetBool("Casting", true);
         //GetComponent<MouseController>().lookAt();
     }
 
-    //private GameObject raySpellObject = null;
 
 
-    public void WaitForAnimation() // called by stuff animation event
+    public void WaitForAnimation() // called by animation
     {
-        //transform.Find("Hand").GetChild(0).GetComponent<Animator>().SetBool("Casting", false);
-        //GetComponent<PlayerMovement>().playerCastSpell = false;
         Debug.Log("t/spell: Casting...");
         if (castType == CastType.quick)
         {
             CastSpell(choosedSpellNumber);
-
-            transform.Find("Hand").GetChild(0).GetComponent<Animator>().SetBool("Casting", false);
-            GetComponent<PlayerMovement>().isPlayerCastSpell = false;
         }
         else if (castType == CastType.wall)
         {
             wallSpellObject.GetComponent<WallForm>().preparingModeState = 1;
 
-            transform.Find("Hand").GetChild(0).GetComponent<Animator>().SetBool("Casting", false);
-            GetComponent<PlayerMovement>().isPlayerCastSpell = false;
+            //hand.transform.GetChild(0).GetComponent<Animator>().SetBool("Casting", false);
+            //GetComponent<PlayerMovement>().isPlayerCastSpell = false;
         }
-        else if (castType == CastType.ray)
+        else if (castType == CastType.ray && castingRay == true)
         {
             CastSpell(choosedSpellNumber);
+            
+            //myAnimator.
+        }
+    }
 
-            transform.Find("Hand").GetChild(0).GetComponent<Animator>().speed = 0;
+    public void EndOfCasting()
+    {
+        if (castType != CastType.ray)
+        {
+            GetComponent<PlayerMovement>().isPlayerCastSpell = false;
+            myAnimator.SetBool("castSpell", false);
         }
     }
 
@@ -351,6 +373,7 @@ public class PlayerStatsAndFunction : MonoBehaviour
                     }
                     spellObj = Instantiate(directedFormPrefab, spellStartPoint.transform.position, Quaternion.Euler(transform.rotation.eulerAngles));
                     spellObj.GetComponent<DirectedForm>().setStats(typePrefab, direction, gameObject);
+
                     break;
 
                 case Spells.MagicForms.Cone:
@@ -371,8 +394,10 @@ public class PlayerStatsAndFunction : MonoBehaviour
                             break;
                     }
                     spellObj = Instantiate(coneFormPrefab, spellStartPoint.transform.position, Quaternion.Euler(transform.rotation.eulerAngles));
-                    spellObj.GetComponent<ConeForm>().SetStats(spell, typePrefab, spellStartPoint.transform);
+                    
+                    spellObj.GetComponent<ConeForm>().SetStats(spell, typePrefab, transform);
                     Debug.Log("t/spell: ConeSPell");
+
                     break;
 
                 case Spells.MagicForms.Wall:

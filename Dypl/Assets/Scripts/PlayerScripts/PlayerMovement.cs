@@ -23,19 +23,66 @@ public class PlayerMovement : MonoBehaviour
     private CharacterController controller = null;
     private Vector3 playerVelocity;
 
+    private Animator myAnimator;
+
 
     private void Start()
     {
         controller = GetComponent<CharacterController>();
         move = new Vector3(0, 0, 0);
         postMove = move;
+
+        myAnimator = transform.Find("Ch36_nonPBR").GetComponent<Animator>();
     }
+
+    public float animationSpeed = 1;
 
     private void FixedUpdate()
     {
         playerMaxSpeed = 5;
         if (Input.GetKey(KeyCode.LeftShift)) playerMaxSpeed = 7;
-        if(!isPlayerCastSpell) PlayerMove();
+        if (Input.GetKey(KeyCode.LeftAlt)) playerMaxSpeed = 1.9f;
+        if (!isPlayerCastSpell) PlayerMove();
+
+        if (playerSpeed <= 0f)
+        {
+            myAnimator.SetBool("runSlow", false);
+            myAnimator.SetBool("walk", false);
+            myAnimator.SetBool("sprint", false);
+
+            animationSpeed = 1;
+            //myAnimator.speed = animationSpeed;
+        }
+
+        if (playerSpeed > 0f && playerSpeed <= 2f)
+        {
+            myAnimator.SetBool("walk", true);
+            myAnimator.SetBool("runSlow", false);
+            myAnimator.SetBool("sprint", false);
+
+            animationSpeed = 5f / playerSpeed;
+            //myAnimator.speed = animationSpeed;
+        }
+
+        if (playerSpeed > 2f && playerSpeed <= 5.1f)
+        {
+            myAnimator.SetBool("runSlow", true);
+            myAnimator.SetBool("walk", false);
+            myAnimator.SetBool("sprint", false);
+
+            animationSpeed = 5f / playerSpeed;
+            //myAnimator.speed = animationSpeed;
+        }
+
+        if (playerSpeed > 5.1f)
+        {
+            myAnimator.SetBool("sprint", true);
+            myAnimator.SetBool("walk", false);
+            myAnimator.SetBool("runSlow", false);
+
+            animationSpeed = 5f / playerSpeed;
+            //myAnimator.speed = animationSpeed;
+        }
     }
 
     private void PlayerMove()

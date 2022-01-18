@@ -21,10 +21,10 @@ public class SimpleEnemy : MonoBehaviour
     //private float speed = 5;
     [Header("Stats")]
     public float damage = 10;
-    protected float startHP = 100;
-    public float currentHP = 100;
+    protected float startHealthPoints = 100;
+    public float currentHealthPoints = 100;
 
-    protected float visionAngle = 45;
+    protected float visionAngle = 70;
     protected float visionDistance = 13;
 
     public EnemyState startState = EnemyState.idle;
@@ -46,7 +46,7 @@ public class SimpleEnemy : MonoBehaviour
 
     protected NavMeshAgent agent;
 
-    public GameObject sword;
+    public GameObject weapon;
     public bool forAttack = false;
 
     public Animation anim;
@@ -55,12 +55,7 @@ public class SimpleEnemy : MonoBehaviour
     //public string testString;
     public bool isGrounded;
 
-    private void Start()
-    {
-        Instant();
-    }
-
-    public void Instant()
+    public void Start()
     {
         startPoint = transform.position;
         agent = GetComponent<NavMeshAgent>();
@@ -80,18 +75,19 @@ public class SimpleEnemy : MonoBehaviour
         }
         if (gameObject.transform.Find("Sword"))
         {
-            sword = transform.Find("Sword").gameObject;
+            weapon = transform.Find("Sword").gameObject;
         }
-        if (sword != null && sword.transform.GetComponent<Animation>())
+        if (weapon != null && weapon.transform.GetComponent<Animation>())
         {
-            anim = sword.transform.GetComponent<Animation>();
+            anim = weapon.transform.GetComponent<Animation>();
             anim.playAutomatically = false;
 
         }
-        currentHP = startHP;
+        currentHealthPoints = startHealthPoints;
 
         agent.stoppingDistance = 2f; //////////
     }
+
 
     public virtual void Update()
     {
@@ -179,12 +175,10 @@ public class SimpleEnemy : MonoBehaviour
 
     }
 
-    public float testDistance = 0.05f;
-
     protected void IsGrounded()
     {
         RaycastHit hit;
-        Physics.Raycast(transform.position, new Vector3(0, -1, 0), out hit, testDistance);
+        Physics.Raycast(transform.position, new Vector3(0, -1, 0), out hit, .5f);
         //return Physics.Raycast(transform.position, -Vector3.up, 0.3f, 9); // 9 - ground
 
         if (hit.collider != null && hit.collider.gameObject.layer == 9)
@@ -196,30 +190,11 @@ public class SimpleEnemy : MonoBehaviour
             isGrounded = false;
         }
 
-        //if (Physics.Raycast(new Ray(transform.position, transform.position - new Vector3(0, testDistance, 0)), testDistance, 9))
-        //{
-        //    isGrounded = true;
-        //}
-        //else
-        //{
-        //    isGrounded = false;
-        //}
-
-        //new Ray(transform.position, )
-
-
-
-        //isGrounded = true;
     }
-
-    //private void OnTriggerStay(Collider other)
-    //{
-    //    if (other.gameObject.layer == 8) isGrounded = true;
-    //}
 
     public void GetDamage(float dmg)
     {
-        currentHP -= dmg;
+        currentHealthPoints -= dmg;
     }
 
     private void ChooseState()
@@ -305,6 +280,11 @@ public class SimpleEnemy : MonoBehaviour
         wait = seconds;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="point1">target</param>
+    /// <returns></returns>
     protected float AngleOfVision(Vector3 point1)
     {
         return Vector3.Angle(point1 - transform.position, transform.forward);
@@ -431,7 +411,7 @@ public class SimpleEnemy : MonoBehaviour
     //    //WarnAboutPlayer(target, enemyThatCalled);
     //}
 
-    private void OnDrawGizmos()
+    public void OnDrawGizmos()
     {
         if (visionLines)
         {

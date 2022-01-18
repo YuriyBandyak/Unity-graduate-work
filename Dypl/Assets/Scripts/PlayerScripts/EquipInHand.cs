@@ -5,7 +5,8 @@ using UnityEngine;
 public class EquipInHand : MonoBehaviour
 {
     //stats
-    public Transform hand;
+    public GameObject hand;
+    public GameObject placeForHand;
     private bool visibility = true;
 
     //references
@@ -14,7 +15,7 @@ public class EquipInHand : MonoBehaviour
 
     private void Start()
     {
-        equipment = (GameObject)Instantiate(equipment, hand);
+        equipment = (GameObject)Instantiate(equipment, hand.transform);
         ChangeVisibility();
     }
 
@@ -41,6 +42,8 @@ public class EquipInHand : MonoBehaviour
 
     private void Update()
     {
+        //hand.transform.position = placeForHand.transform.position;
+
         equipment.transform.position = hand.transform.position;
         equipment.transform.rotation = hand.transform.rotation;
         

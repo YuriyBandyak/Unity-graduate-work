@@ -15,8 +15,8 @@ public class CameraFollow : MonoBehaviour
 
     private void Start()
     {
-        simpleCameraPos = new Vector3(0, 15, -6);
-        fightCameraPos = new Vector3(0,8,-4);
+        simpleCameraPos = new Vector3(0, 8, -4);
+        fightCameraPos = new Vector3(0, 13, -6);
     }
 
     private void Update()
@@ -24,11 +24,11 @@ public class CameraFollow : MonoBehaviour
         Vector3 addedVector;
         if(player.GetComponent<PlayerStatsAndFunction>().state == PlayerStatsAndFunction.PlayerStates.inFight)
         {
-            addedVector = player.transform.position + simpleCameraPos;
+            addedVector = player.transform.position + fightCameraPos;
         }
         else
         {
-            addedVector = player.transform.position + fightCameraPos;
+            addedVector = player.transform.position + simpleCameraPos;
         }
 
         transform.position = addedVector;

@@ -18,18 +18,36 @@ public class MouseController : MonoBehaviour
     {
         {
             Ray ray;
-            RaycastHit hit;
-
             ray = mainCamera.ScreenPointToRay(Input.mousePosition);
 
-            if (Physics.Raycast(ray, out hit, 1000))
+            RaycastHit[] multyHit;
+            multyHit = Physics.RaycastAll(ray, 100);
+
+            for (int j = 0; j < multyHit.Length; j++) // sortowanie b¹belkowe 
             {
-                if (hit.collider != null)
+                for (int i = 0; i < multyHit.Length - 1; i++)
                 {
-                    //pointer.transform.position = hit.point + new Vector3(0, 0.1f, 0); // old and wrong
-                    pointer.transform.position = new Vector3(hit.point.x, 0.1f, hit.point.z);
+                    if (multyHit[i].distance > multyHit[i + 1].distance)
+                    {
+                        RaycastHit temp = multyHit[i + 1];
+                        multyHit[i + 1] = multyHit[i];
+                        multyHit[i] = temp;
+                    }
                 }
             }
+
+
+
+            foreach (RaycastHit hitt in multyHit)
+            {
+                if (hitt.collider.gameObject.layer == 9)
+                {
+                    pointer.transform.position = new Vector3(hitt.point.x, hitt.point.y + 0.1f, hitt.point.z);
+                    break;
+                }
+            }
+
+
         }
     }
 

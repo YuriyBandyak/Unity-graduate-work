@@ -41,24 +41,23 @@ public class WallForm : MonoBehaviour
         if (preparingModeState == 0)
         {
             endPoint.transform.position = Vector3.MoveTowards(startPoint.transform.position, spellPointer.transform.position + new Vector3(0,1,0), distance);
-            line.SetPosition(1, new Vector3(endPoint.transform.localPosition.x, 1, endPoint.transform.localPosition.z));
+            if (line.enabled == true)
+            {
+                line.SetPosition(1, new Vector3(endPoint.transform.localPosition.x, 1, endPoint.transform.localPosition.z));
+            }
         }
         else if(preparingModeState == 1)
         {
-            SetSupportiveObjectInvisible();
             SetTypePrefabs();
             preparingModeState = 2;
         }
-        if (Input.GetMouseButtonUp(0))
-        {
-            preparingModeState = 1;
-        }
     }
 
-    private void SetSupportiveObjectInvisible()
+    public void SetSupportiveObjectInvisible()
     {
         startPoint.SetActive(false);
-        Object.Destroy(line);
+        //Object.Destroy(line);
+        line.enabled = false;
         endPoint.SetActive(false);
     }
 
@@ -75,10 +74,10 @@ public class WallForm : MonoBehaviour
         }
     }
 
-    public void ChangeModeToCasted()
-    {
-        preparingModeState = 1;
-    }
+    //public void ChangeModeToCasted()
+    //{
+    //    preparingModeState = 1;
+    //}
 
     public void SetStats(Spells.Spell spell, GameObject magicType, GameObject spellPointer)
     {

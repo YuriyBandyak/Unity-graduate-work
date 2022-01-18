@@ -21,10 +21,12 @@ public class JumperEnemy : SimpleEnemy
 
     public GameObject testObject;
 
-    private void Start()
+    private new void Start()
     {
+        base.Start();
+
         startTransform = transform;
-        Instant();
+        
         if (GetComponent<Rigidbody>())
         {
             rb = GetComponent<Rigidbody>();
@@ -32,17 +34,13 @@ public class JumperEnemy : SimpleEnemy
         }
         else
         {
-            //Debug.LogError("Add rigidbody component to enemy");
+            Debug.LogError("Add rigidbody component to enemy");
         }
-        //if (testObject != null)
-        //{
-        //    Instantiate(testObject, transform);
-        //}
     }
 
     public void GetDamage(int damageAmount)
     {
-        currentHP -= damageAmount;
+        currentHealthPoints -= damageAmount;
     }
 
     private void PlayAttackAnimation() { }
@@ -78,7 +76,10 @@ public class JumperEnemy : SimpleEnemy
     {
         distanceToPlayer = (Vector3.Distance(transform.position, player.transform.position));
 
-        if (distanceToPlayer < distanceToAttack && pauseBetweenAttacks<=0 && AngleOfVision(player.transform.position) < visionAngle && DistanceAndObstacles())
+        if (distanceToPlayer < distanceToAttack && 
+            pauseBetweenAttacks<=0 && 
+            AngleOfVision(player.transform.position) < visionAngle && 
+            DistanceAndObstacles())
         {
             Debug.Log("CanAttack = true");
             canSetNewPath = false;
@@ -89,7 +90,8 @@ public class JumperEnemy : SimpleEnemy
             Attack();
             
         }
-        else if (distanceToPlayer < distanceToAttack)
+        else if (distanceToPlayer < distanceToAttack &&
+            DistanceAndObstacles())
         {
             GoFor(player.transform);
         }
@@ -113,9 +115,9 @@ public class JumperEnemy : SimpleEnemy
         if (Physics.Raycast(ray, out hit) && hit.collider.gameObject.layer == 9)
         {
             //testObject.transform.position = hit.point - transform.position;
-            Debug.Log("name: " + hit.collider.name);
-            Debug.Log("distanceFromRayStart: " + hit.distance);
-            Debug.Log("distanceFromEnemy: " + Vector3.Distance(transform.position, hit.point));
+            //Debug.Log("name: " + hit.collider.name);
+            //Debug.Log("distanceFromRayStart: " + hit.distance);
+            //Debug.Log("distanceFromEnemy: " + Vector3.Distance(transform.position, hit.point));
         }
         if (hit.distance < 0.5)
         {
