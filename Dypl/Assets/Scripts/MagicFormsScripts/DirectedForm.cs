@@ -65,26 +65,24 @@ public class DirectedForm : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         //Debug.Log("name: " + other.name);
-        if (other.gameObject.layer == 6)
+        if (other.gameObject.layer == 6) // enemy
         {
             if (other.transform.parent.GetComponent<SimpleEnemy>())
             {
                 other.transform.parent.GetComponent<SimpleEnemy>().GetDamage(power);
+
+                /*
+                 * should add type of spell to constructor and if its fire then add effect on enemy or player
+                 */
+
                 Destroy(gameObject);
             }
-            if (other.transform.parent.GetComponent<JumperEnemy>())
+        }
+        else if(other.gameObject.layer == 3) //player
+        {
+            if (other.transform.parent.GetComponent<PlayerStatsAndFunction>())
             {
-                other.transform.parent.GetComponent<SimpleEnemy>().GetDamage(power);
-                Destroy(gameObject);
-            }
-            if (other.GetComponent<SimpleEnemy>())
-            {
-                other.GetComponent<SimpleEnemy>().GetDamage(power);
-                Destroy(gameObject);
-            }
-            if (other.GetComponent<JumperEnemy>())
-            {
-                other.GetComponent<SimpleEnemy>().GetDamage(power);
+                other.transform.parent.GetComponent<PlayerStatsAndFunction>().GetDamage(power);
                 Destroy(gameObject);
             }
         }

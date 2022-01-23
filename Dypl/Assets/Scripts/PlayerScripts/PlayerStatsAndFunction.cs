@@ -8,6 +8,7 @@ public class PlayerStatsAndFunction : MonoBehaviour
     public enum PlayerStates { idle, inFight};
     public enum CastType { none, quick, wall, ray, concentrated };
 
+
     //Player stats
     public float currentHP = 100;
     public float currentMP = 0;
@@ -45,6 +46,10 @@ public class PlayerStatsAndFunction : MonoBehaviour
     private Animator myAnimator;
 
     public GameObject player;
+
+
+
+
     private void Start()
     {
         spellCreationPanel = spellCreationWindows.transform.GetChild(0).gameObject;
@@ -344,6 +349,7 @@ public class PlayerStatsAndFunction : MonoBehaviour
         Debug.Log("t/Spell: Trying to cast spell in slot" + n);
         Spells.Spell spell = new Spells.Spell();
         spell = GetComponent<Spells>().spellslist[n];
+        spell.SetOwner(gameObject);
         if (spell != null && currentMP > spell.requiredMana)
         {
             GameObject typePrefab = null;
@@ -372,6 +378,7 @@ public class PlayerStatsAndFunction : MonoBehaviour
                             break;
                     }
                     spellObj = Instantiate(directedFormPrefab, spellStartPoint.transform.position, Quaternion.Euler(transform.rotation.eulerAngles));
+
                     spellObj.GetComponent<DirectedForm>().setStats(typePrefab, direction, gameObject);
 
                     break;

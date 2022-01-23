@@ -28,6 +28,8 @@ public class ConeForm : MonoBehaviour
         {
             i.localScale = i.localScale * distance;
         }
+
+        transform.GetChild(0).gameObject.AddComponent<ColliderReactor>();
     }
 
     private void LateUpdate()
@@ -38,8 +40,43 @@ public class ConeForm : MonoBehaviour
         }
     }
 
-    //private void LateUpdate()
-    //{
-    //    //if (magicType.transform.GetChild(0).GetComponent<ParticleSystem>().particleCount == 0) Destroy(gameObject);
-    //}
+    
+
+    private class ColliderReactor : MonoBehaviour
+    {
+
+        private float power = 0;
+
+        private void Start()
+        {
+            power = MagicBalance.Cone.power;
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            Debug.Log("name: " + other.name);
+            if (other.gameObject.layer == 6) // enemy
+            {
+                if (other.transform.parent.GetComponent<SimpleEnemy>())
+                {
+                    other.transform.parent.GetComponent<SimpleEnemy>().GetDamage(power);
+
+                    /*
+                     * should add type of spell to constructor and if its fire then add effect on enemy or player
+                     */
+
+                    Destroy(gameObject);
+                }
+            }
+            else if (other.gameObject.layer == 3) //player
+            {
+                if (other.transform.parent.GetComponent<PlayerStatsAndFunction>())
+                {
+                    other.transform.parent.GetComponent<PlayerStatsAndFunction>().GetDamage(power);
+                    Destroy(gameObject);
+                }
+            }
+        }
+    }
+
 }

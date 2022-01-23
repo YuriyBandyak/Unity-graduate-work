@@ -11,20 +11,20 @@ public class TriggerEnter : MonoBehaviour
     //references
     public GameObject enemy;
 
-    private void OnTriggerStay(Collider other)
-    {
-        if(myObject!=null&& other.gameObject == myObject)
-        {
-            Debug.Log("Thats it");
-            if (enemy != null)
-            {
-                enemy.transform.GetComponent<SimpleEnemy>().forAttack = true;
-            }
-            else
-            {
-                Debug.Log("Something wrong");
-            }
-        }
-    }
+    //private void OnTriggerStay(Collider other)
+    //{
+    //    if(myObject!=null&& other.gameObject == myObject)
+    //    {
+    //        Debug.Log("Thats it");
+    //        if (enemy != null)
+    //        {
+    //            enemy.transform.GetComponent<SimpleEnemy>().forAttack = true;
+    //        }
+    //        else
+    //        {
+    //            Debug.Log("Something wrong");
+    //        }
+    //    }
+    //}
 
 }

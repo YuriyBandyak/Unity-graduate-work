@@ -68,19 +68,16 @@ public class BuffsDebuffs : MonoBehaviour
             {
                 ShowEffect(buffsDebuffs.fired, effectList[0].effectTime);
                 if (GetComponent<PlayerStatsAndFunction>()) GetComponent<PlayerStatsAndFunction>().currentHP -= 5 / 50f;
+                if (GetComponent<SimpleEnemy>()) GetComponent<SimpleEnemy>().currentHealthPoints -= 5 / 50f;
+
                 effectList[0].effectTime -= 1/50f;
-                //if (effectObj.transform.GetChild(0).GetComponent<ParticleSystem>().particleCount <= 0)
-                //    //Object.Destroy(effectObj, 1);
-                //    //Debug.Log("ParticleCount: " + effectObj.transform.GetChild(0).GetComponent<ParticleSystem>().particleCount);
-                //    Debug.Log("ChildrenCount: " + effectObj.transform.childCount);
+
                 if (effectList[0].effectTime <= 0)
                 {
                     
                     Object.Destroy(effectObj, 5);
                     effectObj = null;
                 }
-
-                //Debug.Log("Fire effect duration: " + effectList[0].effectTime);
             }
             if (effectList[1].effectTime > 0)
             {
@@ -93,6 +90,8 @@ public class BuffsDebuffs : MonoBehaviour
             {
                 ShowEffect(buffsDebuffs.poisoned, effectList[2].effectTime);
                 if (GetComponent<PlayerStatsAndFunction>()) GetComponent<PlayerStatsAndFunction>().currentHP -= 2 / 50f;
+                if (GetComponent<SimpleEnemy>()) GetComponent<SimpleEnemy>().currentHealthPoints -= 2 / 50f;
+
                 effectList[2].effectTime -= 1 / 50f;
                 //if (effectList[2].effectTime <= 0) Object.Destroy(effectObj);
             }
@@ -112,7 +111,7 @@ public class BuffsDebuffs : MonoBehaviour
         }
         if (effectObj == null)
         {
-            effectObj = Instantiate(effectPref, gameObject.transform.Find("Body").transform.position + new Vector3(0,1,0), 
+            effectObj = Instantiate(effectPref, transform.position + new Vector3(0,1,0), 
                 Quaternion.identity);
 
             //official manual way to change duration for partical system
