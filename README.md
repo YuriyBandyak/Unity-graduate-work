@@ -9,5 +9,4 @@ Implemented core mechanics:
 There are also a bunch of secondary mechanics that give extra gaming experience. They are very simple: user interface, animation, collision control, player movement.
 
 Language: C#
-
 Game Engine: Unity
